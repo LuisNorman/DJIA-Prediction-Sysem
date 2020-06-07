@@ -13129,7 +13129,7 @@ div#notebook {
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;Reddit_Data.csv&quot;</span><span class="p">)</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> 
-<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">15000</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">20000</span><span class="p">)</span>
 <span class="c1"># df</span>
 </pre></div>
 
@@ -13330,9 +13330,20 @@ div#notebook {
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span>
-<span class="n">sentiment_analyzer</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
-<span class="n">sentiment_analyzer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># from sklearn.svm import SVC</span>
+<span class="c1"># sentiment_analyzer_lr = LogisticRegression()</span>
+<span class="c1"># sentiment_analyzer_lr.fit(df_train, df_train_target)</span>
+
+<span class="c1"># Create a sentiment analyzer using Logistic Regression</span>
+<span class="n">sentiment_analyzer_lr</span> <span class="o">=</span> <span class="n">LogisticRegression</span><span class="p">()</span>
+<span class="n">sentiment_analyzer_lr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">)</span>
+<span class="n">sentiment_analyzer_lrpreds_test</span> <span class="o">=</span> <span class="n">sentiment_analyzer_lr</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span>
+<span class="c1"># Run 10-fold validation</span>
+<span class="n">cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">sentiment_analyzer_lr</span><span class="p">,</span> <span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy for logistic regression classifier&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overall Accuracy on X-Val: </span><span class="si">%0.2f</span><span class="s2"> (+/- </span><span class="si">%0.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cv_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">cv_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Training: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_lr</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Test: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_lr</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13363,53 +13374,16 @@ Please also refer to the documentation for alternative solver options:
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt"></div>
 
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
-                   intercept_scaling=1, l1_ratio=None, max_iter=100,
-                   multi_class=&#39;auto&#39;, n_jobs=None, penalty=&#39;l2&#39;,
-                   random_state=None, solver=&#39;lbfgs&#39;, tol=0.0001, verbose=0,
-                   warm_start=False)</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Accuracy for logistic regression classifier
+Overall Accuracy on X-Val: 0.51 (+/- 0.02)
+Score on Training:  0.6991038747949009
+Score on Test:  0.6102978293791015
+</pre>
 </div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sentiment_analyzer</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">))</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[16]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0    1.0
-Name: 18, dtype: float64</pre>
-</div>
-
 </div>
 
 </div>
@@ -13421,7 +13395,19 @@ Name: 18, dtype: float64</pre>
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Classification rate&quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create decision tree classifier and train the classifier</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">tree</span>
+<span class="n">sentiment_analyzer_tree</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">DecisionTreeClassifier</span><span class="p">(</span><span class="n">criterion</span><span class="o">=</span><span class="s1">&#39;gini&#39;</span><span class="p">)</span>
+<span class="n">sentiment_analyzer_tree</span> <span class="o">=</span> <span class="n">sentiment_analyzer_tree</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">)</span>
+<span class="c1"># Compute predictions</span>
+<span class="n">sentiment_analyzer_treepreds_test</span> <span class="o">=</span> <span class="n">sentiment_analyzer_tree</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span>
+<span class="c1"># Run 10-fold validation</span>
+<span class="n">cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">sentiment_analyzer_tree</span><span class="p">,</span> <span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy for decision tree classifier&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overall Accuracy on X-Val: </span><span class="si">%0.2f</span><span class="s2"> (+/- </span><span class="si">%0.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cv_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">cv_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Training: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_tree</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Test: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_tree</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">))</span>
+<span class="c1">## Possibly overfitting the training set ##</span>
 </pre></div>
 
     </div>
@@ -13438,350 +13424,12 @@ Name: 18, dtype: float64</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Classification rate 0.5908479138627187
+<pre>Accuracy for decision tree classifier
+Overall Accuracy on X-Val: 0.65 (+/- 0.02)
+Score on Training:  0.9977912406916573
+Score on Test:  0.6499242806663301
 </pre>
 </div>
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">df_train</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[18]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>...</th>
-      <th>29769</th>
-      <th>29770</th>
-      <th>29771</th>
-      <th>29772</th>
-      <th>29773</th>
-      <th>29774</th>
-      <th>29775</th>
-      <th>29776</th>
-      <th>29777</th>
-      <th>29778</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>1418</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>12367</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>761</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>12805</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>4073</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>10988</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>584</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>5905</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>2467</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>7247</th>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>11888 rows × 29779 columns</p>
-</div>
-</div>
-
 </div>
 
 </div>
@@ -13793,8 +13441,18 @@ Name: 18, dtype: float64</pre>
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;Combined_News_DJIA.csv&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#  Create linear discriminant analysis classifier</span>
+<span class="kn">from</span> <span class="nn">sklearn.discriminant_analysis</span> <span class="kn">import</span> <span class="n">LinearDiscriminantAnalysis</span>
+<span class="n">sentiment_analyzer_ld</span> <span class="o">=</span> <span class="n">LinearDiscriminantAnalysis</span><span class="p">()</span>
+<span class="c1"># Compute predictions</span>
+<span class="n">sentiment_analyzer_ld</span> <span class="o">=</span> <span class="n">sentiment_analyzer_ld</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">)</span>
+<span class="n">sentiment_analyzer_ldpreds_test</span> <span class="o">=</span> <span class="n">sentiment_analyzer_ld</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">df_test</span><span class="p">)</span>
+<span class="c1"># Run 10-fold validation</span>
+<span class="n">cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">sentiment_analyzer_ld</span><span class="p">,</span> <span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy for linear discriminant analysis classifier&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overall Accuracy on X-Val: </span><span class="si">%0.2f</span><span class="s2"> (+/- </span><span class="si">%0.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cv_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">cv_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Training: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_ld</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_train</span><span class="p">,</span> <span class="n">df_train_target</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Test: &quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_ld</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -13811,7 +13469,10 @@ Name: 18, dtype: float64</pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>(1989, 27)
+<pre>Accuracy for linear discriminant analysis classifier
+Overall Accuracy on X-Val: 0.50 (+/- 0.03)
+Score on Training:  0.9865581219235138
+Score on Test:  0.41241797072185765
 </pre>
 </div>
 </div>
@@ -13822,11 +13483,75 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Classification rate&quot;</span><span class="p">,</span> <span class="n">sentiment_analyzer_tree</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df_test</span><span class="p">,</span> <span class="n">df_test_target</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Classification rate 0.6499242806663301
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[75]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;Combined_News_DJIA.csv&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimension before removing NA&#39;s: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Dimension before removing NAs: (1989, 27)
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Drop na&#39;s and reindex dataframe</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dimension after removing NA&#39;s: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
 <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># Reindex the dataframe after dropping column</span>
 </pre></div>
 
@@ -13855,10 +13580,10 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Loop through each column and replace the unneccessary tag </span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Loop through each column and replace the unneccessary tag &quot;b.&quot;</span>
 <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">2</span><span class="p">:]:</span> 
     <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;b.&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="c1"># data</span>
@@ -13871,10 +13596,13 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">tokenize_string</span><span class="p">(</span><span class="n">input_str</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Function that accepts a string of words (i.e. sentence/headline)</span>
+<span class="c1"># tokenizes it, remove tokens that are less than 2 characters,</span>
+<span class="c1"># remove tokens that are stopwords after lemmatizing the token</span>
+<span class="k">def</span> <span class="nf">tokenize_string</span><span class="p">(</span><span class="n">input_str</span><span class="p">):</span>
     <span class="n">tokens</span> <span class="o">=</span> <span class="n">nltk</span><span class="o">.</span><span class="n">tokenize</span><span class="o">.</span><span class="n">word_tokenize</span><span class="p">(</span><span class="n">input_str</span><span class="p">)</span> <span class="c1"># Tokenize string</span>
     <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">]</span> <span class="c1"># Remove words less than 2 chars</span>
     <span class="n">tokens</span> <span class="o">=</span> <span class="p">[</span><span class="n">wordnet_lemmatizer</span><span class="o">.</span><span class="n">lemmatize</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">]</span> <span class="c1"># Convert words into their base form</span>
@@ -13893,10 +13621,14 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">normalize_tokenized_string</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a vector where each index represents a word in the word dictionary </span>
+<span class="c1"># At each index, the value is the frequency of that word occuring in the </span>
+<span class="c1"># token&#39;s list passed in the function. Lastly, divide the frequency of each  </span>
+<span class="c1"># of entry in the vector by the total number of tokens (tokens in the token list)</span>
+<span class="k">def</span> <span class="nf">normalize_tokenized_string</span><span class="p">(</span><span class="n">tokens</span><span class="p">):</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">word_index_map</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">tokens</span><span class="p">:</span> <span class="c1"># Loop each token in the comment </span>
         <span class="k">if</span> <span class="n">token</span> <span class="ow">in</span> <span class="n">word_index_map</span><span class="p">:</span> <span class="c1"># We can&#39;t analyze words that we haven&#39;t used for training</span>
@@ -13914,11 +13646,14 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Reconstruct the reddit dataframe to be represented by it&#39;s entries sentiment label</span>
-<span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Function that rebuilds the original dataset that was made up of top 25 headlines</span>
+<span class="c1"># for each day from June 2008 to July 2016 with it sentiment label representation.</span>
+<span class="c1"># To do this, I pass a sentiment analyzer along with the dataset to make predictions</span>
+<span class="c1"># of the sentiment of each headlines in every data object. Return newly created matrix.</span>
+<span class="k">def</span> <span class="nf">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sentiment_analyzer</span><span class="p">):</span>
     <span class="n">mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># Create matrix to hold the data</span>
     <span class="n">position</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Pointer for our data</span>
     <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
@@ -13941,12 +13676,12 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Reconstruct the original reddit dataset to be represented by its</span>
 <span class="c1"># entries sentiment label and then convert the matrix it into a dataframe </span>
-<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> 
+<span class="n">df2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sentiment_analyzer_lr</span><span class="p">))</span> 
 <span class="n">df2</span> <span class="c1"># Display new dataframe </span>
 </pre></div>
 
@@ -13960,7 +13695,7 @@ Name: 18, dtype: float64</pre>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[25]:</div>
+    <div class="prompt output_prompt">Out[38]:</div>
 
 
 
@@ -14011,16 +13746,16 @@ Name: 18, dtype: float64</pre>
       <th>0</th>
       <td>1.0</td>
       <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>...</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14034,9 +13769,9 @@ Name: 18, dtype: float64</pre>
     <tr>
       <th>1</th>
       <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
       <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14046,8 +13781,8 @@ Name: 18, dtype: float64</pre>
       <td>...</td>
       <td>0.0</td>
       <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14057,7 +13792,7 @@ Name: 18, dtype: float64</pre>
     </tr>
     <tr>
       <th>2</th>
-      <td>1.0</td>
+      <td>-1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14070,11 +13805,11 @@ Name: 18, dtype: float64</pre>
       <td>...</td>
       <td>1.0</td>
       <td>1.0</td>
+      <td>-1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -14092,10 +13827,10 @@ Name: 18, dtype: float64</pre>
       <td>1.0</td>
       <td>1.0</td>
       <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
       <td>0.0</td>
       <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14113,13 +13848,13 @@ Name: 18, dtype: float64</pre>
       <td>1.0</td>
       <td>0.0</td>
       <td>-1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>-1.0</td>
       <td>...</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>0.0</td>
+      <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>0.0</td>
@@ -14179,13 +13914,13 @@ Name: 18, dtype: float64</pre>
       <th>1982</th>
       <td>1.0</td>
       <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>...</td>
       <td>1.0</td>
@@ -14202,7 +13937,7 @@ Name: 18, dtype: float64</pre>
     <tr>
       <th>1983</th>
       <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14213,11 +13948,11 @@ Name: 18, dtype: float64</pre>
       <td>1.0</td>
       <td>...</td>
       <td>1.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>-1.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14227,9 +13962,9 @@ Name: 18, dtype: float64</pre>
       <th>1984</th>
       <td>1.0</td>
       <td>-1.0</td>
-      <td>0.0</td>
       <td>1.0</td>
-      <td>0.0</td>
+      <td>1.0</td>
+      <td>1.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14239,7 +13974,7 @@ Name: 18, dtype: float64</pre>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14249,21 +13984,21 @@ Name: 18, dtype: float64</pre>
     </tr>
     <tr>
       <th>1985</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.0</td>
       <td>1.0</td>
       <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>0.0</td>
+      <td>1.0</td>
       <td>...</td>
       <td>1.0</td>
       <td>1.0</td>
       <td>1.0</td>
-      <td>1.0</td>
+      <td>0.0</td>
       <td>0.0</td>
       <td>1.0</td>
       <td>1.0</td>
@@ -14293,365 +14028,10 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># First, let&#39;s finish reconstructing the dataset by adding the DJIA </span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># df2[&quot;Label&quot;] = data[&quot;Label&quot;]</span>
-<span class="n">df2</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[27]:</div>
-
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
-      <th>7</th>
-      <th>8</th>
-      <th>9</th>
-      <th>...</th>
-      <th>15</th>
-      <th>16</th>
-      <th>17</th>
-      <th>18</th>
-      <th>19</th>
-      <th>20</th>
-      <th>21</th>
-      <th>22</th>
-      <th>23</th>
-      <th>24</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>-1.0</td>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-    <tr>
-      <th>1981</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>1982</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>1983</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>1984</th>
-      <td>1.0</td>
-      <td>-1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-    </tr>
-    <tr>
-      <th>1985</th>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>...</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>0.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-      <td>1.0</td>
-    </tr>
-  </tbody>
-</table>
-<p>1986 rows × 25 columns</p>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the data</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Split the dataset into train and test set</span>
 <span class="n">df2_train</span><span class="p">,</span> <span class="n">df2_test</span><span class="p">,</span> <span class="n">df2_train_target</span><span class="p">,</span> <span class="n">df2_test_target</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">df2</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;Label&quot;</span><span class="p">],</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">33</span><span class="p">)</span>
 </pre></div>
 
@@ -14662,7 +14042,7 @@ Name: 18, dtype: float64</pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[66]:</div>
+<div class="prompt input_prompt">In&nbsp;[67]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Let&#39;s create logistic regression classifer to the behavior of the DJIA closing value</span>
@@ -14693,9 +14073,9 @@ Name: 18, dtype: float64</pre>
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Accuracy for logistic regression classifier
-Overall Accuracy on X-Val: 0.50 (+/- 0.12)
-Score on Training:  0.5597122302158274
-Score on Test:  0.4949664429530201
+Overall Accuracy on X-Val: 0.47 (+/- 0.10)
+Score on Training:  0.5589928057553957
+Score on Test:  0.4815436241610738
 </pre>
 </div>
 </div>
@@ -14706,7 +14086,7 @@ Score on Test:  0.4949664429530201
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create decision tree classifier and train the classifier</span>
@@ -14739,9 +14119,9 @@ Score on Test:  0.4949664429530201
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Accuracy for decision tree classifier
-Overall Accuracy on X-Val: 0.53 (+/- 0.05)
-Score on Training:  0.8906474820143885
-Score on Test:  0.511744966442953
+Overall Accuracy on X-Val: 0.51 (+/- 0.09)
+Score on Training:  0.9776978417266187
+Score on Test:  0.5151006711409396
 </pre>
 </div>
 </div>
@@ -14752,7 +14132,7 @@ Score on Test:  0.511744966442953
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div>
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#  Create linear discriminant analysis classifier</span>
@@ -14784,9 +14164,9 @@ Score on Test:  0.511744966442953
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Accuracy for linear discriminant analysis classifier
-Overall Accuracy on X-Val: 0.50 (+/- 0.11)
-Score on Training:  0.560431654676259
-Score on Test:  0.49161073825503354
+Overall Accuracy on X-Val: 0.47 (+/- 0.09)
+Score on Training:  0.5575539568345323
+Score on Test:  0.4815436241610738
 </pre>
 </div>
 </div>
@@ -14801,14 +14181,14 @@ Score on Test:  0.49161073825503354
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create SVM classifier (Linear)</span>
-<span class="kn">from</span> <span class="nn">sklearn.svm</span> <span class="kn">import</span> <span class="n">SVC</span> <span class="c1"># Support vector classifier</span>
-<span class="n">svm_linear</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1E10</span><span class="p">)</span>
-<span class="n">svm_linear</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">df2_train</span><span class="p">,</span> <span class="n">df2_train_target</span><span class="p">)</span>
-<span class="n">cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">svm_linear</span><span class="p">,</span> <span class="n">df2_test</span><span class="p">,</span> <span class="n">df2_test_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy for support vector machine classifier&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overall Accuracy on X-Val: </span><span class="si">%0.2f</span><span class="s2"> (+/- </span><span class="si">%0.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cv_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">cv_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Training: &quot;</span><span class="p">,</span> <span class="n">svm_linear</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df2_train</span><span class="p">,</span> <span class="n">df2_train_target</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Test: &quot;</span><span class="p">,</span> <span class="n">svm_linear</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df2_test</span><span class="p">,</span> <span class="n">df2_test_target</span><span class="p">))</span>
+<span class="c1"># from sklearn.svm import SVC # Support vector classifier</span>
+<span class="c1"># svm_linear = SVC(kernel=&#39;linear&#39;, C=1E10)</span>
+<span class="c1"># svm_linear.fit(df2_train, df2_train_target)</span>
+<span class="c1"># cv_scores = cross_val_score(svm_linear, df2_test, df2_test_target, cv=10)</span>
+<span class="c1"># print(&quot;Accuracy for support vector machine classifier&quot;)</span>
+<span class="c1"># print(&quot;Overall Accuracy on X-Val: %0.2f (+/- %0.2f)&quot; % (cv_scores.mean(), cv_scores.std() * 2))</span>
+<span class="c1"># print(&quot;Score on Training: &quot;, svm_linear.score(df2_train, df2_train_target))</span>
+<span class="c1"># print(&quot;Score on Test: &quot;, svm_linear.score(df2_test, df2_test_target))</span>
 </pre></div>
 
     </div>
@@ -14822,13 +14202,13 @@ Score on Test:  0.49161073825503354
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Create a kernelized SVM by using RBF (radial basis function)</span>
-<span class="n">svm_k</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">C</span><span class="o">=</span><span class="mf">1E6</span><span class="p">)</span>
-<span class="n">svm_k</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">cv_scores</span> <span class="o">=</span> <span class="n">cross_val_score</span><span class="p">(</span><span class="n">svm_k</span><span class="p">,</span> <span class="n">df2_test</span><span class="p">,</span> <span class="n">df2_test_target</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accuracy for support vector machine classifier&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Overall Accuracy on X-Val: </span><span class="si">%0.2f</span><span class="s2"> (+/- </span><span class="si">%0.2f</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cv_scores</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">cv_scores</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">*</span> <span class="mi">2</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Training: &quot;</span><span class="p">,</span> <span class="n">svm_k</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df2_train</span><span class="p">,</span> <span class="n">df2_train_target</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Score on Test: &quot;</span><span class="p">,</span> <span class="n">svm_k</span><span class="o">.</span><span class="n">score</span><span class="p">(</span><span class="n">df2_test</span><span class="p">,</span> <span class="n">df2_test_target</span><span class="p">))</span>
+<span class="c1"># svm_k = SVC(kernel=&#39;rbf&#39;, C=1E6)</span>
+<span class="c1"># svm_k.fit(X, y)</span>
+<span class="c1"># cv_scores = cross_val_score(svm_k, df2_test, df2_test_target, cv=10)</span>
+<span class="c1"># print(&quot;Accuracy for support vector machine classifier&quot;)</span>
+<span class="c1"># print(&quot;Overall Accuracy on X-Val: %0.2f (+/- %0.2f)&quot; % (cv_scores.mean(), cv_scores.std() * 2))</span>
+<span class="c1"># print(&quot;Score on Training: &quot;, svm_k.score(df2_train, df2_train_target))</span>
+<span class="c1"># print(&quot;Score on Test: &quot;, svm_k.score(df2_test, df2_test_target))</span>
 </pre></div>
 
     </div>
