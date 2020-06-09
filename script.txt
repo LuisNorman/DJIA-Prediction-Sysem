@@ -1,0 +1,25 @@
+Hi my name is luis norman and for my project i built a predicition system that predicts the behavior of the stock market based on the top 25 articles headlines on Reddit's subcategory world news that posted that day. 
+
+More precisely, the system will predict if the dj closing price has increased or decreased from the opening price based on the top 25 article headlines posted.
+
+To get a clearer understanding of what I'm trying to do, lets take a look at the dataset
+ 
+So here we have the top 25 article headlines, the date, and this is the target variable. This target variable is represented by a 1 if the closing price increased or stay the same as the closing price and 0 if it has decreased. This is the goal of the project but before doing so i must transform these headlines into a structure that could be effectively used for building a statistical model.
+
+To do that, I created a sentiment analyzer that transforms each headline into sentiment label representation. To build the sentiment analyzer, I had to choose another dataset to train and test the sentiment analyzer. I ended up choosing a dataset that consisted of arbritrary comments made on reddit and the sentiment label of that comment. The goal of the sentiment analyzer is to predict this variable.
+
+Next, I read in the stop words to exclude commonly used word when predicting the sentiment
+
+The purpose of this function tokenize comments is to loop each comments, tokenize the comment and remove each token that's a stopword or less than 3 characters. Also it creates a word index map allowing me to keep track of all the words the sentiment analyzer can analyze. The function the returns the tokens list and the word index
+
+The next function "normalize tokens" has a goal to take the tokens list and word index map that was returned from the tokenize comments function and normalizes each token list. The function then returns the normalized tokens list. The normalize function does this for example. If There are twenty words in the first tokens list and the first word "family" appeared once  it has a value of 1/20=0.05. Also to point out, each token list is the size of the word index map because the token list representive of the entire word map allowing every token list to be uniform. The tokens list is rather sparse because majority of the words in the word index map will not be in the tokens list. This function allows the sentiment analyzer to not over or under react to large number instead we take the ratio of that word occuring
+
+Next, I created a function to attach the labels to the new normalized tokens list.
+
+Here's a look at the new dataframe where each row is a comment and each column is term. Next, i extract the dependent variable so I then could split the train and test set 
+
+With the training and test sets, I built a logistic regression model to predict the sentiment label of the transformed dataset.
+
+Now with the sentiment analyzer built, I can use it for converting headlines into their sentiment label.
+
+First 
